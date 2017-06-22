@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>weather</title>
+    <link rel="stylesheet" href="weather.css">
+</head>
+</body>
+<div id="argument">
+    <div class="body">
+        <div id="search">
+            <input type="text" v-on:keyup="enter" v-model="names" placeholder="输入地名">
+            <!-- <a href="##" id="search" v-on:click="flush">☁search</a> -->
+            <button id="search" v-on:click="flush">☁ search</button>
+        </div>
+        <div class="headline">Current weather and forecasts in your city</div>
+        <div class="wrapper">
+            <div class="box1">
+                <div id="area">Weather in {{toponymy}},{{country}}</div>
+                <div id="temp"><img v-bind:src='"http://openweathermap.org/img/w/"+icon+".png"'> {{temp}} ℃ </div>
+                <div id="weather">{{weather}}</div>
+                <div id="spwtime">get at {{date}} {{time}} <a href="##"> Wrong data?</a></div>
+                <div id="table">
+                    <div class="group">
+                        <div class="key">风</div>
+                        <div class="value">Fresh Breeze {{speed}}m/s
+                            <br> {{wind_dir}} ({{wind_deg}}) </div>
+                    </div>
+                    <div class="group">
+                        <div class="key">云朵</div>
+                        <div class="value">{{cloud}}</div>
+                    </div>
+                    <div class="group">
+                        <div class="key">气压</div>
+                        <div class="value">{{air_pre}} hpa</div>
+                    </div>
+                    <div class="group">
+                        <div class="key">湿度</div>
+                        <div class="value">{{humidity}} %</div>
+                    </div>
+                    <div class="group">
+                        <div class="key">日出</div>
+                        <div class="value">{{sunrise}}</div>
+                    </div>
+                    <div class="group">
+                        <div class="key">日落</div>
+                        <div class="value">{{sunset}}</div>
+                    </div>
+                    <div class="group">
+                        <div class="key">经纬度</div>
+                        <div class="value red">[{{lon}} {{lat}}]</div>
+                    </div>
+                </div>
+            </div>
+            <div class="box2">
+                <ul class="nav">
+                    <li id="main_click" class="li" v-on:click="main_click">
+                        <a href="##" class="main">Main</a>
+                    </li>
+                    <li id="daily_click" class="li" v-on:click="daily_click">
+                        <a href="##" class="daily">Daily</a>
+                    </li>
+                    <li id="hourly_click" class="li" v-on:click="hourly_click">
+                        <a href="##" class="hourly">Hourly</a>
+                    </li>
+                    <li id="chart_click" class="li" v-on:click="chart_click">
+                        <a href="##" class="chart">Chat</a>
+                    </li>
+                    <li id="map_click" class="li" v-on:click="map_click">
+                        <a href="##" class="map">Map</a>
+                    </li>
+                </ul>
+                <div class="weather_chart">
+                    <div class=" ele main_chart">
+                        <div class="title">
+                            Weather and forecasts in {{toponymy}},{{country}}
+                        </div>
+                        <div class="title">
+                            13 day weather forecasts
+                        </div>
+                        <ul id="weather_13day">
+                            <li class="item" v-for="item in items">
+                                <div class="header">
+                                    {{item.week}} {{item.day}} {{item.month}}
+                                    <img v-bind:src="item.day_icon">
+                                </div>
+                                <div class="content">
+                                    <span class="max_temp">{{item.max_temp}}</span>
+                                    <span class="min_temp">{{item.min_temp}}</span>
+                                    <i class="expree">{{item.description}}</i>
+                                    <div class="index">
+                                        <p>{{item.speed}} m/s</p>
+                                        <p>{{item.clouds}} %, {{item.press}} hpa</p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="ele daily_chart">
+                        <div class="title">
+                            Daily weather and forecasts in {{toponymy}},{{country}}
+                        </div>
+                        <div class="title">
+                            13 day weather forecasts
+                        </div>
+                    </div>
+                    <div class="ele hourly_chart">
+                        <div class="title">
+                            Hourly weather and forecasts in {{toponymy}},{{country}}
+                        </div>
+                            <ul id="hourly_prediction">
+                                <li class="dates" v-for="date in dates">
+                                    <div class="dayily">
+                                        <span>{{date.day}}</span>
+                                        <span v-if="date.isToday">Today</span>
+                                    </div>
+                                    <ul class="weather_data">
+                                        <li class="hourly_table" v-for="hourlyWeather in date.hourlyWeathers">
+                                            <div class="hourly_header">
+                                                <span>{{hourlyWeather.time}}</span>
+                                                <span><img v-bind:src="hourlyWeather.icon"></span>
+                                            </div>
+                                            <div class="hourly_content">
+                                                <div class="situation">
+                                                    <span class="max_temp">{{hourlyWeather.max_temp}}</span>
+                                                    <span>{{hourlyWeather.description}}</span>
+                                                </div>
+                                                <div class="weather_data">
+                                                    <span>{{hourlyWeather.min_temp}}</span>
+                                                    <span>{{hourlyWeather.max_temp}}℃</span>
+                                                    <span>{{hourlyWeather.speed}}m/</span>
+                                                    <span>{{hourlyWeather.humidity}}%</span>
+                                                    <span>{{hourlyWeather.pressure}}hpa</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <div class="ele chart_chart">
+                        <div class="title">
+                            Chart weather and forecasts in {{toponymy}},{{country}}
+                        </div>
+                        <div class="title">
+                            13 day weather forecasts
+                        </div>
+                    </div>
+                    <div class="ele map_chart">
+                        <div class="title">
+                            Map weather and forecasts in {{toponymy}},{{country}}
+                        </div>
+                        <div class="title">
+                            13 day weather forecasts
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.bootcss.com/vue/2.3.0/vue.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.16.1/axios.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script src="weather.js"></script>
+    <!-- <script type="text/javascript">
+	var Url = "http://api.openweathermap.org/data/2.5/weather?q=beijing&APPID=fe9f45d7f758713c610aad0a531279a5&lang=zh_cn&units=metric"
+	var header = new Vue({
+		el: "#header",
+		data: {
+			toponymy:"",
+			country:""
+		},
+		mounted: function(){
+			var that = this
+			axios.get(Url)
+			.then(function(response){
+				console.log(response);
+				that.toponymy = response.data.name
+				that.country = response.data.sys.country
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+
+		}
+	});
+
+
+
+
+
+	var spwtime = new Vue({
+		el: "#spwtime",
+		data: {
+			day:"",
+			time:""
+		},
+		mounted: function(){
+			var that = this
+			axios.get(Url)
+			.then(function(response){
+				console.log(response);
+				var date = new Date();
+				that.day = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+
+		}
+	});
+
+
+
+	var temp = new Vue({
+		el: "#temp",
+		data: {
+			icon:"",
+			temp:""
+		},
+		mounted: function(){
+			var that = this
+			axios.get(Url)
+			.then(function(response){
+				console.log(response);
+				that.icon = response.data.weather[0].icon
+				that.temp = response.data.main.temp
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+
+		}
+	});
+
+
+
+	var weather = new Vue({
+		el: "#weather",
+		data: {
+			weather:"",
+		},
+		mounted: function(){
+			var that = this
+			axios.get(Url)
+			.then(function(response){
+				console.log(response);
+				that.weather = response.data.weather[0].main
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+
+		}
+	});
+
+
+
+
+	var argument = new Vue({
+		el: "#argument",
+		data: {
+			speed:"",
+			// temp:""
+			wind_dir:"",
+			cloud:"",
+			air_pre:"",
+			humidity:"",
+			sunrise:"",
+			sunset:"",
+			lon:"",
+			lat:""
+
+		},
+		mounted: function(){
+			var that = this
+			axios.get(Url)
+			.then(function(response){
+				console.log(response);
+				let degree= response.data.wind.deg
+				console.log(degree+"")
+				function  toTextualDescription(degree){
+				    if ((degree>337.5 && degree<360)|| (degree>22.5 && degree<22.5))
+				    {return 'Northerly';}
+				    else if(degree>22.5 && degree<67.5){return 'North Easterly';}
+				    else if(degree>67.5 && degree<112.5){return 'Easterly';}
+				    else if(degree>122.5 && degree<157.5){return 'South Easterly';} 
+				    else if(degree>157.5 && degree<202.5){return 'Southerly';}
+				    else if(degree>202.5 && degree<247.5){return 'South Westerly';}
+				    else if(degree>247.5 && degree<292.5){return 'Westerly';}
+				    else if(degree>292.5 && degree<337.5){return 'North Westerly';}
+				}
+
+				// that.speed = toTextualDescription(degree)
+				console.log(toTextualDescription(degree)+"我是风的登记")
+
+
+				that.wind_dir = toTextualDescription(degree)
+				// that.temp = response.data.main.
+				that.cloud = response.data.clouds.all
+				that.speed = response.data.wind.speed
+				that.air_pre = response.data.main.pressure
+				that.humidity = response.data.main.humidity
+				let rise = new Date(response.data.sys.sunrise*1000)
+				that.sunrise = "0"+rise.getHours()+":"+rise.getMinutes()
+				let set = new Date(response.data.sys.sunset*1000)
+				that.sunset = set.getHours()+":"+set.getMinutes()
+				that.geo_coords = response.data.main.humidity
+				that.lon = response.data.coord.lon
+				that.lat = response.data.coord.lat
+			})
+			.catch(function(error){
+				console.log(error);
+			});
+
+		}
+	});
+
+	</script> -->
+    </body>
+
+</html>
